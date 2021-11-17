@@ -33,8 +33,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ChatFragment extends Fragment {
 
@@ -133,11 +136,18 @@ public class ChatFragment extends Fragment {
                 String name = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
                 Uri uriPhone = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
                 String selection = ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " =?";
+                String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
                 Cursor phoneCursor = applicationContext.getContentResolver().query(uriPhone, null, selection, new String[]{id}, null);
                 if (phoneCursor.moveToNext()) {
                     String number = phoneCursor.getString(phoneCursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                    Contact model = new Contact(pictures[counter], "now", "This is a sample message.",name, number);
-                    chatList.add(model);
+                    if (number.equals("+92 334 5820814") || number.equals("+92 310 5376009")) {
+                        Contact model = new Contact(pictures[counter], currentTime, "This is a sample message.", name, number);
+                        chatList.add(model);
+                    }
+                    else {
+                        Contact model = new Contact(pictures[counter], "Mon", "This is a sample message.", name, number);
+                        chatList.add(model);
+                    }
                     phoneCursor.close();
                 }
                 counter++;

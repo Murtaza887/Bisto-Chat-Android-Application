@@ -1,6 +1,7 @@
 package com.murtaza.i180595_i180599;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -20,11 +21,17 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class Home extends AppCompatActivity {
 
@@ -41,11 +48,43 @@ public class Home extends AppCompatActivity {
         actionBar.hide();
         setContentView(R.layout.activity_home);
 
+        CurrentUser currentUser = new CurrentUser();
+
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("contacts");
+        String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
+
+        reference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Contact contact = snapshot.getValue(Contact.class);
+                if (contact.getPhone().equals(currentUser.getUser())) {
+                    reference.child(snapshot.getKey()).child("last_active").setValue(currentTime);
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         contextOfApplication = getApplicationContext();
-
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navbar);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 

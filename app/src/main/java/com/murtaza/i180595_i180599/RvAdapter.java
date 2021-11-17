@@ -35,7 +35,6 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.RvViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull RvViewHolder holder, int position) {
         holder.name.setText(contact.get(holder.getAdapterPosition()).getName());
-        holder.last_message.setText(contact.get(holder.getAdapterPosition()).getLast_message());
         holder.last_active.setText(contact.get(holder.getAdapterPosition()).getLast_active());
         holder.image.setImageResource(contact.get(holder.getAdapterPosition()).getImage());
         holder.view.setOnClickListener(new View.OnClickListener() {
@@ -65,7 +64,6 @@ public class RvAdapter extends RecyclerView.Adapter<RvAdapter.RvViewHolder> {
         public RvViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
-            last_message = itemView.findViewById(R.id.last_msg);
             last_active = itemView.findViewById(R.id.last_active);
             image = itemView.findViewById(R.id.profpic);
             view = itemView;

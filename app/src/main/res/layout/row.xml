@@ -18,21 +18,10 @@
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/name"
         android:textColor="@color/white"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:layout_marginLeft="20dp"
         android:hint="Contact Name"
         android:textSize="20sp"
-        app:layout_constraintLeft_toRightOf="@id/profpic" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/last_msg"
-        android:textColor="@color/white"
-        android:layout_marginTop="60dp"
-        android:layout_marginLeft="20dp"
-        android:textSize="15sp"
         app:layout_constraintLeft_toRightOf="@id/profpic" />
 
     <TextView
