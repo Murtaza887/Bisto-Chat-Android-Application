@@ -21,10 +21,6 @@ public class Screen7 extends AppCompatActivity {
     public Screen7() {
         if (list == null) {
             list = new ArrayList<>();
-            list.add(new CallRecord("Jane Fowler", "12:00", "inbound", R.drawable.logo));
-            list.add(new CallRecord("Jason Boyd", "04:00", "lost", R.drawable.logo));
-            list.add(new CallRecord("Carol Clark", "18:00", "lost", R.drawable.logo));
-            list.add(new CallRecord("Nicholas Dunn", "23:00", "inbound", R.drawable.logo));
         }
     }
 

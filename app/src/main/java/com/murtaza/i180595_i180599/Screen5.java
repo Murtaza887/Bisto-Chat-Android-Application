@@ -88,8 +88,8 @@ public class Screen5 extends ScreenshotDetectionActivity {
         textView.setText(name);
 
         TextView textView1 = findViewById(R.id.onlineStatus);
-        if (last_active.equals("now")) {
-            textView1.setText("Online now");
+        if (!last_active.equals("Mon")) {
+            textView1.setText("Online");
         }
         else {
             textView1.setText(last_active);
@@ -167,6 +167,11 @@ public class Screen5 extends ScreenshotDetectionActivity {
         img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Context context = getApplicationContext();
+
+                FirebaseMessaging.getInstance().subscribeToTopic("all");
+                FcmNotificationsSender sender = new FcmNotificationsSender("ebD_YFCGTkuQO3XFbbLeHC:APA91bHD_ZbGnbZD6tfkTnoJWTmohvbTQC26WsWNNAwNkzOD5-DDl2kccvoaOZXPTVttOTrB1kgNWiMVtrIfn8ePWrUIHMpKfvQO564NVjk941sotrBUky1qeOubOeZGPNOBNXaMw1Vp", currentUser.getUser(), "Calling...", getApplicationContext(), Screen5.this);
+                sender.SendNotifications();
                 Intent intent = new Intent(Screen5.this, Screen9.class);
                 intent.putExtra("Name", name);
                 intent.putExtra("Image", image);
@@ -283,7 +288,7 @@ public class Screen5 extends ScreenshotDetectionActivity {
     @Override
     public void onScreenCaptured(String path) {
         FirebaseMessaging.getInstance().subscribeToTopic("all");
-        FcmNotificationsSender sender = new FcmNotificationsSender("eenA863gQWuYZSBIyqWz2w:APA91bGM5XDO3AZP966x8-PpjLFxcx2P9VjNG4Hxv6H1zo8uspLaDxUDqXPW99DKgOmjAMcET1AQkwDw7nPnby_ItJuBJ4cblVHkbFIhSLG4eg81oS_X38jlG_RpgQi0k1j2wrsBxWmr", "Screenshot Captured", path, getApplicationContext(),Screen5.this);
+        FcmNotificationsSender sender = new FcmNotificationsSender("ebD_YFCGTkuQO3XFbbLeHC:APA91bHD_ZbGnbZD6tfkTnoJWTmohvbTQC26WsWNNAwNkzOD5-DDl2kccvoaOZXPTVttOTrB1kgNWiMVtrIfn8ePWrUIHMpKfvQO564NVjk941sotrBUky1qeOubOeZGPNOBNXaMw1Vp", "Screenshot Captured", path, getApplicationContext(),Screen5.this);
         sender.SendNotifications();
     }
 

@@ -1,13 +1,12 @@
 package com.murtaza.i180595_i180599;
 
 public class CallRecord {
-    private String name, time, status;
+    private String name, time;
     private int image;
 
-    public CallRecord(String name, String time, String status, int image) {
+    public CallRecord(int image, String name, String time) {
         this.name = name;
         this.time = time;
-        this.status = status;
         this.image = image;
     }
 
@@ -25,14 +24,6 @@ public class CallRecord {
 
     public void setTime(String time) {
         this.time = time;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public int getImage() {

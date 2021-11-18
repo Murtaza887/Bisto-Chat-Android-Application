@@ -38,11 +38,9 @@ public class PhoneFragment extends Fragment {
     List<CallRecord> callList = null;
     RecyclerView recyclerViewCall;
     View view;
-    String[] times = {"10:21", "22:14", "Mon", "Wed"};
-    String[] statuses = {"inbound", "lost"};
     int counter = 0;
     CallHistoryAdapter adapter;
-    int pictures[] = {R.drawable.prof_pic1, R.drawable.prof_pic2, R.drawable.prof_pic3, R.drawable.no_dp, R.drawable.no_dp};
+    int pictures[] = {R.drawable.prof_pic1, R.drawable.prof_pic2, R.drawable.prof_pic3, R.drawable.prof_pic4, R.drawable.prof_pic5};
 
     public PhoneFragment() {
         if (callList == null) {
@@ -56,7 +54,39 @@ public class PhoneFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_phone, container, false);
 
         recyclerViewCall = view.findViewById(R.id.CallList);
-        checkPermission();
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(view.getContext());
+        recyclerViewCall.setLayoutManager(layoutManager);
+        adapter = new CallHistoryAdapter(callList, view.getContext());
+        recyclerViewCall.setAdapter(adapter);
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("callrecord");
+        reference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                callList.add(snapshot.getValue(CallRecord.class));
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         return view;
     }
@@ -66,7 +96,7 @@ public class PhoneFragment extends Fragment {
             requestPermissions(new String[] { Manifest.permission.READ_CONTACTS}, 100);
         }
         else {
-            getContactList();
+            // getContactList();
         }
     }
 
@@ -88,10 +118,8 @@ public class PhoneFragment extends Fragment {
                 if (phoneCursor.moveToNext()) {
                     String number = phoneCursor.getString(phoneCursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
                     Random r = new Random();
-                    int randomTime = r.nextInt(times.length);
-                    int randomStatus = r.nextInt(statuses.length);
-                    CallRecord model = new CallRecord(name, times[randomTime], statuses[randomStatus], pictures[counter]);
-                    callList.add(model);
+//                    int randomTime = r.nextInt(times.length);
+//                    int randomStatus = r.nextInt(statuses.length);
                     phoneCursor.close();
                 }
                 counter++;

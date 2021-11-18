@@ -40,7 +40,7 @@ public class ContactFragment extends Fragment {
     ContactAdapter adapter;
     int counter = 0;
     View view;
-    int pictures[] = {R.drawable.prof_pic1, R.drawable.prof_pic2, R.drawable.prof_pic3, R.drawable.no_dp, R.drawable.no_dp};
+    int pictures[] = {R.drawable.prof_pic1, R.drawable.prof_pic2, R.drawable.prof_pic3, R.drawable.prof_pic4, R.drawable.prof_pic5};
 
     public ContactFragment() {
         if (list == null) {

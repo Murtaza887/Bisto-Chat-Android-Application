@@ -35,15 +35,8 @@ public class CallHistoryAdapter extends RecyclerView.Adapter<CallHistoryAdapter.
     @Override
     public void onBindViewHolder(@NonNull CallHistoryViewHolder holder, int position) {
         holder.name.setText(list.get(holder.getAdapterPosition()).getName());
-        holder.status.setText(list.get(holder.getAdapterPosition()).getStatus());
         holder.time.setText(list.get(holder.getAdapterPosition()).getTime());
         holder.profile.setImageResource(list.get(holder.getAdapterPosition()).getImage());
-        if (list.get(holder.getAdapterPosition()).getStatus() == "inbound") {
-            holder.status_image.setImageResource(R.drawable.outgoing);
-        }
-        else {
-            holder.status_image.setImageResource(R.drawable.missed_call);
-        }
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,10 +61,8 @@ public class CallHistoryAdapter extends RecyclerView.Adapter<CallHistoryAdapter.
         public CallHistoryViewHolder(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
-            status = itemView.findViewById(R.id.status);
             time = itemView.findViewById(R.id.time);
             profile = itemView.findViewById(R.id.profpic);
-            status_image = itemView.findViewById(R.id.status_img);
             view = itemView;
         }
     }
