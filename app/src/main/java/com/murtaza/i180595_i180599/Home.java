@@ -35,8 +35,6 @@ import java.util.Locale;
 
 public class Home extends AppCompatActivity {
 
-    FirebaseDatabase database;
-    DatabaseReference reference;
     public static Context contextOfApplication;
     public static Context getContextOfApplication() {
         return contextOfApplication;
@@ -47,42 +45,6 @@ public class Home extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
         setContentView(R.layout.activity_home);
-
-        CurrentUser currentUser = new CurrentUser();
-
-        database = FirebaseDatabase.getInstance();
-        reference = database.getReference("contacts");
-        String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
-
-        reference.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Contact contact = snapshot.getValue(Contact.class);
-                if (contact.getPhone().equals(currentUser.getUser())) {
-                    reference.child(snapshot.getKey()).child("last_active").setValue(currentTime);
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
 
         contextOfApplication = getApplicationContext();
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navbar);

@@ -22,7 +22,7 @@ import java.util.Locale;
 public class Screen9 extends AppCompatActivity {
 
     String name;
-    Integer image;
+    int image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -7,6 +7,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class MessagesDBHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "Message.db";
@@ -19,22 +23,24 @@ public class MessagesDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String create = "CREATE TABLE MESSAGES (_id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT, message TEXT, time TEXT)";
+        String create = "CREATE TABLE MESSAGES (_id INTEGER PRIMARY KEY AUTOINCREMENT, message TEXT, time TEXT, username TEXT, receiver TEXT, sender TEXT)";
         sqLiteDatabase.execSQL(create);
+        String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
 
-        insertData("Jason Doe","This is a sample message.", "13:00", sqLiteDatabase);
-        insertData("Jason Doe","This is a sample message.", "13:02", sqLiteDatabase);
-        insertData("Samantha Williams","This is a sample message.", "Mon", sqLiteDatabase);
-        insertData("Samantha Williams","This is a sample message.", "Tue", sqLiteDatabase);
-        insertData("John Green","This is a sample message.", "17:34", sqLiteDatabase);
-        insertData("John Green","This is a sample message.", "now", sqLiteDatabase);
+        insertData("This is a sample message", currentTime, "AaSaif", "saifullah@gmail.com", "murtazahassnain17@gmail.com", sqLiteDatabase);
+        insertData("This is a sample message", currentTime, "Aamir Bhai", "Aamir Bhai", "murtazahassnain17@gmail.com", sqLiteDatabase);
+        insertData("This is a sample message", currentTime, "Abbu", "Abbu", "murtazahassnain17@gmail.com", sqLiteDatabase);
+        insertData("This is a sample message", currentTime, "Abdullah", "Abdullah", "murtazahassnain17@gmail.com", sqLiteDatabase);
+        insertData("This is a sample message", currentTime, "Abdullah Akhtar", "Abdullah Akhtar", "murtazahassnain17@gmail.com", sqLiteDatabase);
     }
 
-    public Boolean insertData(String username, String message, String time, SQLiteDatabase database) {
+    public Boolean insertData(String message, String time, String username, String receiver, String sender, SQLiteDatabase database) {
         ContentValues values = new ContentValues();
         values.put("username", username);
         values.put("message", message);
         values.put("time", time);
+        values.put("receiver", receiver);
+        values.put("sender", sender);
 
         double result = database.insert("MESSAGES", null, values);
         return result != -1;

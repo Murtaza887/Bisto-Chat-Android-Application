@@ -23,8 +23,8 @@ public class DBHelper extends SQLiteOpenHelper {
         String create = "CREATE TABLE USERS (_id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT)";
         sqLiteDatabase.execSQL(create);
 
-        insertData("murtazahassnain17@gmail.com", "abcdef", sqLiteDatabase);
-        insertData("murtazahassnain@outlook.com", "123456", sqLiteDatabase);
+        insertData("murtazahassnain17@gmail.com", "abcd", sqLiteDatabase);
+        insertData("murtazahassnain@outlook.com", "1234", sqLiteDatabase);
     }
 
     public Boolean insertData(String email, String password, SQLiteDatabase database) {

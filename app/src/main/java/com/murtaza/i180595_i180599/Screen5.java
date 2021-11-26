@@ -52,7 +52,6 @@ public class Screen5 extends ScreenshotDetectionActivity {
 
     List<Message> list = null;
     RecyclerView recyclerView;
-    String token;
     ChatAdapter adapter;
     String name, last_active, phoneNumber;
     int image;
@@ -60,9 +59,8 @@ public class Screen5 extends ScreenshotDetectionActivity {
     Bitmap bitmap;
 
     public Screen5() {
-        if (list == null) {
+        if (list == null)
             list = new ArrayList<>();
-        }
     }
 
     @Override
@@ -72,8 +70,6 @@ public class Screen5 extends ScreenshotDetectionActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
         setContentView(R.layout.activity_screen5);
-
-        CurrentUser currentUser = new CurrentUser();
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -104,45 +100,42 @@ public class Screen5 extends ScreenshotDetectionActivity {
             }
         });
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference reference = database.getReference("messages");
+        MessagesDBHelper helper = new MessagesDBHelper(Screen5.this);
+        SQLiteDatabase database = helper.getReadableDatabase();
+
+        String query = "SELECT * FROM MESSAGES where username = '" + name + "'";
+        Cursor cursor = database.rawQuery(query, new String[]{});
+        if (cursor != null)
+            cursor.moveToFirst();
+        do {
+            String message = null;
+            if (cursor != null) {
+                message = cursor.getString(1);
+            }
+            String time = null;
+            if (cursor != null) {
+                time = cursor.getString(2);
+            }
+            String username = null;
+            if (cursor != null) {
+                username = cursor.getString(3);
+            }
+            String receiver = null;
+            if (cursor != null) {
+                receiver = cursor.getString(4);
+            }
+            String sender = null;
+            if (cursor != null) {
+                sender = cursor.getString(5);
+            }
+            list.add(new Message(message, time, username, receiver, sender));
+        } while (cursor.moveToNext());
 
         recyclerView = findViewById(R.id.messages);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Screen5.this);
         recyclerView.setLayoutManager(layoutManager);
         adapter = new ChatAdapter(list, Screen5.this);
         recyclerView.setAdapter(adapter);
-
-        reference.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Message message = snapshot.getValue(Message.class);
-                if ((message.getTo().equals(phoneNumber) && message.getFrom().equals(currentUser.getUser())) || (message.getTo().equals(currentUser.getUser()) && message.getFrom().equals(phoneNumber))) {
-                    list.add(snapshot.getValue(Message.class));
-                    adapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
 
         EditText editText = findViewById(R.id.searchbar);
         editText.addTextChangedListener(new TextWatcher() {
@@ -163,21 +156,21 @@ public class Screen5 extends ScreenshotDetectionActivity {
 
         });
 
-        ImageView img = findViewById(R.id.phone_logo);
-        img.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Context context = getApplicationContext();
-
-                FirebaseMessaging.getInstance().subscribeToTopic("all");
-                FcmNotificationsSender sender = new FcmNotificationsSender("ebD_YFCGTkuQO3XFbbLeHC:APA91bHD_ZbGnbZD6tfkTnoJWTmohvbTQC26WsWNNAwNkzOD5-DDl2kccvoaOZXPTVttOTrB1kgNWiMVtrIfn8ePWrUIHMpKfvQO564NVjk941sotrBUky1qeOubOeZGPNOBNXaMw1Vp", currentUser.getUser(), "Calling...", getApplicationContext(), Screen5.this);
-                sender.SendNotifications();
-                Intent intent = new Intent(Screen5.this, Screen9.class);
-                intent.putExtra("Name", name);
-                intent.putExtra("Image", image);
-                startActivity(intent);
-            }
-        });
+//        ImageView img = findViewById(R.id.phone_logo);
+//        img.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Context context = getApplicationContext();
+//
+//                FirebaseMessaging.getInstance().subscribeToTopic("all");
+//                FcmNotificationsSender sender = new FcmNotificationsSender("doHfNOduRG283Nx_DWlrec:APA91bF5uEtpkAdt2URl6jEZBHr81E6GCLUs_J2f0ZAnbdGrmJcruwHW7zIYkHPn9FFt70yMfkwBRCGJRKMsRReZjmZt1dhRAa9kXVrlFnS-KAFhl69U7wM2MRIub52hgG6ow08XwsTc", currentUser.getUser(), "Calling...", getApplicationContext(), Screen5.this);
+//                sender.SendNotifications();
+//                Intent intent = new Intent(Screen5.this, Screen9.class);
+//                intent.putExtra("Name", name);
+//                intent.putExtra("Image", image);
+//                startActivity(intent);
+//            }
+//        });
 
         ImageView send = findViewById(R.id.sendMessage);
         send.setOnClickListener(new View.OnClickListener() {
@@ -185,14 +178,20 @@ public class Screen5 extends ScreenshotDetectionActivity {
             public void onClick(View view) {
                 EditText editText = findViewById(R.id.messageText);
                 String text = editText.getText().toString();
-
-                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                DatabaseReference reference = database.getReference("messages");
-
                 String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
 
-                reference.push().setValue(new Message(text, currentTime, name, phoneNumber, currentUser.getUser()));
-                adapter.notifyDataSetChanged();
+                MessagesDBHelper helper = new MessagesDBHelper(Screen5.this);
+                SQLiteDatabase database = helper.getWritableDatabase();
+
+                CurrentUser currentUser = new CurrentUser();
+                helper.insertData(text, currentTime, name, name, currentUser.getUser(), database);
+
+                recyclerView = findViewById(R.id.messages);
+                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Screen5.this);
+                recyclerView.setLayoutManager(layoutManager);
+                adapter = new ChatAdapter(list, Screen5.this);
+                recyclerView.setAdapter(adapter);
+
                 editText.getText().clear();
             }
         });
@@ -288,7 +287,7 @@ public class Screen5 extends ScreenshotDetectionActivity {
     @Override
     public void onScreenCaptured(String path) {
         FirebaseMessaging.getInstance().subscribeToTopic("all");
-        FcmNotificationsSender sender = new FcmNotificationsSender("ebD_YFCGTkuQO3XFbbLeHC:APA91bHD_ZbGnbZD6tfkTnoJWTmohvbTQC26WsWNNAwNkzOD5-DDl2kccvoaOZXPTVttOTrB1kgNWiMVtrIfn8ePWrUIHMpKfvQO564NVjk941sotrBUky1qeOubOeZGPNOBNXaMw1Vp", "Screenshot Captured", path, getApplicationContext(),Screen5.this);
+        FcmNotificationsSender sender = new FcmNotificationsSender("doHfNOduRG283Nx_DWlrec:APA91bF5uEtpkAdt2URl6jEZBHr81E6GCLUs_J2f0ZAnbdGrmJcruwHW7zIYkHPn9FFt70yMfkwBRCGJRKMsRReZjmZt1dhRAa9kXVrlFnS-KAFhl69U7wM2MRIub52hgG6ow08XwsTc", "Screenshot Captured", path, getApplicationContext(),Screen5.this);
         sender.SendNotifications();
     }
 

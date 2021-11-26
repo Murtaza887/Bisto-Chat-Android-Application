@@ -5,9 +5,9 @@ public class CallRecord {
     private int image;
 
     public CallRecord(int image, String name, String time) {
+        this.image = image;
         this.name = name;
         this.time = time;
-        this.image = image;
     }
 
     public String getName() {

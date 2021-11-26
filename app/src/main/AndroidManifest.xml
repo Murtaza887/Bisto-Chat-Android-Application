@@ -45,7 +45,8 @@
             android:exported="true" />
         <activity
             android:name=".Home"
-            android:exported="true"></activity>
+            android:exported="true">
+        </activity>
         <activity
             android:name=".Screen9"
             android:exported="true" />

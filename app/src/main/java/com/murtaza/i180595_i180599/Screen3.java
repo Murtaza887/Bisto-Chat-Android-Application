@@ -26,15 +26,12 @@ public class Screen3 extends AppCompatActivity {
         actionBar.hide();
         setContentView(R.layout.activity_screen3);
 
-        FirebaseDatabase database;
-        DatabaseReference reference;
-
-        database = FirebaseDatabase.getInstance();
-        reference = database.getReference("users");
-
         field1 = findViewById(R.id.email);
         field2 = findViewById(R.id.password);
         field3 = findViewById(R.id.confirmpassword);
+
+        DBHelper helper = new DBHelper(Screen3.this);
+        SQLiteDatabase database = helper.getWritableDatabase();
 
         TextView login = findViewById(R.id.login);
         login.setOnClickListener(new View.OnClickListener() {
@@ -55,9 +52,13 @@ public class Screen3 extends AppCompatActivity {
 
                 if (!email.equals("") && !password.equals("") && !confirmPassword.equals("")) {
                     if (password.equals(confirmPassword)) {
-                        reference.push().setValue(new User(email, password));
-                        Intent intent = new Intent(Screen3.this, Screen2.class);
-                        startActivity(intent);
+                        Boolean inserted = helper.insertData(email, password, database);
+                        if (inserted) {
+                            Intent intent = new Intent(Screen3.this, Screen2.class);
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(Screen3.this, "Registration Failed!", Toast.LENGTH_SHORT).show();
+                        }
                     }
                     else {
                         Toast.makeText(Screen3.this, "Passwords do not match!", Toast.LENGTH_SHORT).show();

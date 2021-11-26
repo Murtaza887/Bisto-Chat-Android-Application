@@ -37,6 +37,7 @@ public class CallHistoryAdapter extends RecyclerView.Adapter<CallHistoryAdapter.
         holder.name.setText(list.get(holder.getAdapterPosition()).getName());
         holder.time.setText(list.get(holder.getAdapterPosition()).getTime());
         holder.profile.setImageResource(list.get(holder.getAdapterPosition()).getImage());
+        holder.status_image.setImageResource(R.drawable.outgoing);
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -54,7 +55,7 @@ public class CallHistoryAdapter extends RecyclerView.Adapter<CallHistoryAdapter.
     }
 
     public static class CallHistoryViewHolder extends RecyclerView.ViewHolder {
-        TextView name, status, time;
+        TextView name, time;
         ImageView profile, status_image;
         View view;
 
@@ -63,6 +64,7 @@ public class CallHistoryAdapter extends RecyclerView.Adapter<CallHistoryAdapter.
             name = itemView.findViewById(R.id.name);
             time = itemView.findViewById(R.id.time);
             profile = itemView.findViewById(R.id.profpic);
+            status_image = itemView.findViewById(R.id.status_img);
             view = itemView;
         }
     }

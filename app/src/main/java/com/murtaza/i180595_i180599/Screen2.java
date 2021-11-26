@@ -33,11 +33,8 @@ public class Screen2 extends AppCompatActivity {
         actionBar.hide();
         setContentView(R.layout.activity_screen2);
 
-        FirebaseDatabase database;
-        DatabaseReference reference;
-
-        database = FirebaseDatabase.getInstance();
-        reference = database.getReference("users");
+        DBHelper helper = new DBHelper(Screen2.this);
+        SQLiteDatabase database = helper.getReadableDatabase();
 
         TextView regNow = findViewById(R.id.register);
         regNow.setOnClickListener(new View.OnClickListener() {
@@ -59,37 +56,33 @@ public class Screen2 extends AppCompatActivity {
                 String password = field2.getText().toString();
 
                 if (!email.equals("") && !password.equals("")) {
-                    reference.addChildEventListener(new ChildEventListener() {
-                        @Override
-                        public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                            User user = snapshot.getValue(User.class);
-                            if (email.equals(user.getEmail()) && password.equals(user.getPassword())) {
-                                loggedIn = true;
-                                Intent intent = new Intent(Screen2.this, Home.class);
-                                startActivity(intent);
-                            }
+                    Cursor cursor = database.rawQuery("SELECT email, password FROM USERS", new String[]{});
+
+                    if (cursor != null)
+                        cursor.moveToFirst();
+
+                    do {
+                        String value1 = null;
+                        if (cursor != null) {
+                            value1 = cursor.getString(0);
+                        }
+                        String value2 = null;
+                        if (cursor != null) {
+                            value2 = cursor.getString(1);
                         }
 
-                        @Override
-                        public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
+                        if (email.equals(value1) && password.equals(value2)) {
+                            loggedIn = true;
+                            CurrentUser currentUser = new CurrentUser();
+                            currentUser.setUser(email);
+                            Intent intent = new Intent(Screen2.this, Home.class);
+                            startActivity(intent);
                         }
+                    } while (cursor.moveToNext());
 
-                        @Override
-                        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                        }
-
-                        @Override
-                        public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
+                    if (!loggedIn) {
+                        Toast.makeText(Screen2.this, "Incorrect Email or Password! Please try again.", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 else {
                     Toast.makeText(Screen2.this, "Please fill out all fields!", Toast.LENGTH_SHORT).show();

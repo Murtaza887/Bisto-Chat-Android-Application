@@ -45,8 +45,6 @@ public class ChatFragment extends Fragment {
     int pictures[] = {R.drawable.prof_pic1, R.drawable.prof_pic2, R.drawable.prof_pic3, R.drawable.prof_pic4, R.drawable.prof_pic5};
     RecyclerView recyclerViewChat;
     RvAdapter adapter;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference reference = database.getReference("contacts");
     int counter = 0;
     View view;
 
@@ -140,14 +138,14 @@ public class ChatFragment extends Fragment {
                 Cursor phoneCursor = applicationContext.getContentResolver().query(uriPhone, null, selection, new String[]{id}, null);
                 if (phoneCursor.moveToNext()) {
                     String number = phoneCursor.getString(phoneCursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    Contact model;
                     if (number.equals("+92 334 5820814") || number.equals("+92 310 5376009")) {
-                        Contact model = new Contact(pictures[counter], currentTime, "This is a sample message.", name, number);
-                        chatList.add(model);
+                        model = new Contact(pictures[counter], currentTime, "This is a sample message.", name, number);
                     }
                     else {
-                        Contact model = new Contact(pictures[counter], "Mon", "This is a sample message.", name, number);
-                        chatList.add(model);
+                        model = new Contact(pictures[counter], "Mon", "This is a sample message.", name, number);
                     }
+                    chatList.add(model);
                     phoneCursor.close();
                 }
                 counter++;
