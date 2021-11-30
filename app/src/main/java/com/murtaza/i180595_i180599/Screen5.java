@@ -156,21 +156,16 @@ public class Screen5 extends ScreenshotDetectionActivity {
 
         });
 
-//        ImageView img = findViewById(R.id.phone_logo);
-//        img.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Context context = getApplicationContext();
-//
-//                FirebaseMessaging.getInstance().subscribeToTopic("all");
-//                FcmNotificationsSender sender = new FcmNotificationsSender("doHfNOduRG283Nx_DWlrec:APA91bF5uEtpkAdt2URl6jEZBHr81E6GCLUs_J2f0ZAnbdGrmJcruwHW7zIYkHPn9FFt70yMfkwBRCGJRKMsRReZjmZt1dhRAa9kXVrlFnS-KAFhl69U7wM2MRIub52hgG6ow08XwsTc", currentUser.getUser(), "Calling...", getApplicationContext(), Screen5.this);
-//                sender.SendNotifications();
-//                Intent intent = new Intent(Screen5.this, Screen9.class);
-//                intent.putExtra("Name", name);
-//                intent.putExtra("Image", image);
-//                startActivity(intent);
-//            }
-//        });
+        ImageView img = findViewById(R.id.phone_logo);
+        img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Screen5.this, Screen9.class);
+                intent.putExtra("Name", name);
+                intent.putExtra("Image", image);
+                startActivity(intent);
+            }
+        });
 
         ImageView send = findViewById(R.id.sendMessage);
         send.setOnClickListener(new View.OnClickListener() {
@@ -185,6 +180,7 @@ public class Screen5 extends ScreenshotDetectionActivity {
 
                 CurrentUser currentUser = new CurrentUser();
                 helper.insertData(text, currentTime, name, name, currentUser.getUser(), database);
+                list.add(new Message(text, currentTime, name, name, currentUser.getUser()));
 
                 recyclerView = findViewById(R.id.messages);
                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Screen5.this);
@@ -287,7 +283,7 @@ public class Screen5 extends ScreenshotDetectionActivity {
     @Override
     public void onScreenCaptured(String path) {
         FirebaseMessaging.getInstance().subscribeToTopic("all");
-        FcmNotificationsSender sender = new FcmNotificationsSender("doHfNOduRG283Nx_DWlrec:APA91bF5uEtpkAdt2URl6jEZBHr81E6GCLUs_J2f0ZAnbdGrmJcruwHW7zIYkHPn9FFt70yMfkwBRCGJRKMsRReZjmZt1dhRAa9kXVrlFnS-KAFhl69U7wM2MRIub52hgG6ow08XwsTc", "Screenshot Captured", path, getApplicationContext(),Screen5.this);
+        FcmNotificationsSender sender = new FcmNotificationsSender("/topics/all", "Screenshot Captured", path, getApplicationContext(),Screen5.this);
         sender.SendNotifications();
     }
 

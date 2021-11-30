@@ -45,6 +45,8 @@ public class ChatFragment extends Fragment {
     int pictures[] = {R.drawable.prof_pic1, R.drawable.prof_pic2, R.drawable.prof_pic3, R.drawable.prof_pic4, R.drawable.prof_pic5};
     RecyclerView recyclerViewChat;
     RvAdapter adapter;
+    ChatDBHelper helper;
+    SQLiteDatabase database;
     int counter = 0;
     View view;
 
@@ -58,6 +60,9 @@ public class ChatFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_chat, container, false);
+
+        helper = new ChatDBHelper(view.getContext());
+        database = helper.getWritableDatabase();
 
         EditText editText = view.findViewById(R.id.searchbar);
         editText.addTextChangedListener(new TextWatcher() {

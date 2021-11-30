@@ -25,6 +25,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
         insertData("murtazahassnain17@gmail.com", "abcd", sqLiteDatabase);
         insertData("murtazahassnain@outlook.com", "1234", sqLiteDatabase);
+        insertData("saifullah@gmail.com", "pass", sqLiteDatabase);
     }
 
     public Boolean insertData(String email, String password, SQLiteDatabase database) {
