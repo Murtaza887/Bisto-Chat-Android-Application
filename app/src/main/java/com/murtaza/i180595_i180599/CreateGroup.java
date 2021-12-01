@@ -8,12 +8,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class CreateGroup extends AppCompatActivity {
-
-    EditText text1, text2, text3;
+    CheckBox checkBox1, checkBox2, checkBox3, checkBox4, checkBox5;
+    String first, second;
     Button btn;
+    ArrayList<String> list = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,21 +26,34 @@ public class CreateGroup extends AppCompatActivity {
         actionBar.hide();
         setContentView(R.layout.activity_create_group);
 
-        text1 = findViewById(R.id.name1);
-        text2 = findViewById(R.id.name2);
-        text3 = findViewById(R.id.name3);
+        checkBox1 = findViewById(R.id.option1);
+        checkBox2 = findViewById(R.id.option2);
+        checkBox3 = findViewById(R.id.option3);
+        checkBox4 = findViewById(R.id.option4);
+        checkBox5 = findViewById(R.id.option5);
         btn = findViewById(R.id.submit);
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String first = text1.getText().toString();
-                String second = text2.getText().toString();
-                String third = text3.getText().toString();
+                if (checkBox1.isChecked()) {
+                    list.add(checkBox1.getText().toString());
+                }
+                if (checkBox2.isChecked()) {
+                    list.add(checkBox2.getText().toString());
+                }
+                if (checkBox3.isChecked()) {
+                    list.add(checkBox3.getText().toString());
+                }
+                if (checkBox4.isChecked()) {
+                    list.add(checkBox4.getText().toString());
+                }
+                if (checkBox5.isChecked()) {
+                    list.add(checkBox5.getText().toString());
+                }
                 Intent intent = new Intent(CreateGroup.this, Home.class);
-                intent.putExtra("first", first);
-                intent.putExtra("second", second);
-                intent.putExtra("third", third);
+                intent.putExtra("first", "AaSaif");
+                intent.putExtra("second", "Abbu");
                 startActivity(intent);
             }
         });

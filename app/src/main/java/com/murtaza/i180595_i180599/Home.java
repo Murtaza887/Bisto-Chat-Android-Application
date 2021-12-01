@@ -14,6 +14,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -82,15 +83,15 @@ public class Home extends AppCompatActivity {
     };
 
     Contact getContactIntent() {
-        Contact contact = null;
+        String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
+        Contact contact = new Contact();
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String contact1 = extras.getString("first");
             String contact2 = extras.getString("second");
-            String contact3 = extras.getString("third");
-            String groupName = contact1 + "," + contact2 + "," + contact3;
-            String groupPhone = "+923105376009,+923315251219";
-            contact = new Contact(R.drawable.no_dp, "now", "This is a Sample message", groupName, groupPhone);
+            String groupName = contact1 + "," + contact2 + ",Murtaza";
+            String groupPhone = "+923345820814";
+            contact = new Contact(R.drawable.no_dp, currentTime, "This is a Sample message", groupName, groupPhone);
         }
         return contact;
     }

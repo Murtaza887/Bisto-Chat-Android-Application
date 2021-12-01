@@ -53,6 +53,7 @@ public class Screen5 extends ScreenshotDetectionActivity {
     List<Message> list = null;
     RecyclerView recyclerView;
     ChatAdapter adapter;
+    GroupMessageAdapter groupAdapter;
     String name, last_active, phoneNumber;
     int image;
     int index;
@@ -134,8 +135,14 @@ public class Screen5 extends ScreenshotDetectionActivity {
         recyclerView = findViewById(R.id.messages);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Screen5.this);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new ChatAdapter(list, Screen5.this);
-        recyclerView.setAdapter(adapter);
+        if (!name.contains(",")) {
+            adapter = new ChatAdapter(list, Screen5.this);
+            recyclerView.setAdapter(adapter);
+        }
+        else {
+            groupAdapter = new GroupMessageAdapter(list, Screen5.this);
+            recyclerView.setAdapter(groupAdapter);
+        }
 
         EditText editText = findViewById(R.id.searchbar);
         editText.addTextChangedListener(new TextWatcher() {
@@ -185,8 +192,14 @@ public class Screen5 extends ScreenshotDetectionActivity {
                 recyclerView = findViewById(R.id.messages);
                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Screen5.this);
                 recyclerView.setLayoutManager(layoutManager);
-                adapter = new ChatAdapter(list, Screen5.this);
-                recyclerView.setAdapter(adapter);
+                if (!name.contains(",")) {
+                    adapter = new ChatAdapter(list, Screen5.this);
+                    recyclerView.setAdapter(adapter);
+                }
+                else {
+                    groupAdapter = new GroupMessageAdapter(list, Screen5.this);
+                    recyclerView.setAdapter(groupAdapter);
+                }
 
                 editText.getText().clear();
             }
