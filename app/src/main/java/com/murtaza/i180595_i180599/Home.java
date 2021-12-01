@@ -47,6 +47,7 @@ public class Home extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         contextOfApplication = getApplicationContext();
+
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navbar);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
 
@@ -79,4 +80,18 @@ public class Home extends AppCompatActivity {
             return true;
         }
     };
+
+    Contact getContactIntent() {
+        Contact contact = null;
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String contact1 = extras.getString("first");
+            String contact2 = extras.getString("second");
+            String contact3 = extras.getString("third");
+            String groupName = contact1 + "," + contact2 + "," + contact3;
+            String groupPhone = "+923105376009,+923315251219";
+            contact = new Contact(R.drawable.no_dp, "now", "This is a Sample message", groupName, groupPhone);
+        }
+        return contact;
+    }
 }

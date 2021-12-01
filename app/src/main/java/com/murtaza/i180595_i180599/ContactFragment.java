@@ -56,6 +56,15 @@ public class ContactFragment extends Fragment {
             }
         });
 
+        ImageView imageView1 = view.findViewById(R.id.newGroup);
+        imageView1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), CreateGroup.class);
+                startActivity(intent);
+            }
+        });
+
         recyclerView = view.findViewById(R.id.contacts_List);
         checkPermission();
         return view;

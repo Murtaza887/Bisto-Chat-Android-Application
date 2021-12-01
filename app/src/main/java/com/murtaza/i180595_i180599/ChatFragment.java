@@ -158,6 +158,10 @@ public class ChatFragment extends Fragment {
             cursor.close();
         }
         recyclerViewChat.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        Contact contact = ((Home) getActivity()).getContactIntent();
+        if (contact != null) {
+            chatList.add(contact);
+        }
         adapter = new RvAdapter(chatList, view.getContext());
         recyclerViewChat.setAdapter(adapter);
     }
