@@ -51,9 +51,11 @@ public class CreateGroup extends AppCompatActivity {
                 if (checkBox5.isChecked()) {
                     list.add(checkBox5.getText().toString());
                 }
+                first = list.get(0);
+                second = list.get(1);
                 Intent intent = new Intent(CreateGroup.this, Home.class);
-                intent.putExtra("first", "AaSaif");
-                intent.putExtra("second", "Abbu");
+                intent.putExtra("first", first);
+                intent.putExtra("second", second);
                 startActivity(intent);
             }
         });

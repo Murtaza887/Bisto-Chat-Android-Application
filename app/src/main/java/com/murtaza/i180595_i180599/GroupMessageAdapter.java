@@ -33,26 +33,33 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
 
     @Override
     public void onBindViewHolder(@NonNull GroupMessageViewHolder holder, int position) {
+        CurrentUser currentUser = new CurrentUser();
+
         holder.message.setText(list.get(position).getMessage());
         holder.time.setText(list.get(position).getTime());
+        if (list.get(position).getFrom().equals("murtazahassnain17@gmail.com"))
+            holder.username.setText("Murtaza");
+        if (list.get(position).getFrom().equals("saifullah@gmail.com"))
+            holder.username.setText("Saifullah");
 
-        CurrentUser currentUser = new CurrentUser();
         if (list.get(holder.getAdapterPosition()).getFrom().equals(currentUser.getUser())) {
             holder.constraintLayout.setBackground(context.getResources().getDrawable(R.drawable.rounded_rectangle2));
             ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) holder.constraintLayout.getLayoutParams();
-            holder.username.setText(currentUser.getUser());
             params.leftMargin = 750;
         }
         else {
             holder.constraintLayout.setBackground(context.getResources().getDrawable(R.drawable.rounded_rectangle));
-            holder.username.setText("AaSaif");
         }
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, EditMessage.class);
+                intent.putExtra("Id", list.get(holder.getAdapterPosition()).getId());
                 intent.putExtra("Text", list.get(holder.getAdapterPosition()).getMessage());
                 intent.putExtra("Time", list.get(holder.getAdapterPosition()).getTime());
+                intent.putExtra("Username", list.get(holder.getAdapterPosition()).getUsername());
+                intent.putExtra("To", list.get(holder.getAdapterPosition()).getTo());
+                intent.putExtra("From", list.get(holder.getAdapterPosition()).getFrom());
                 context.startActivity(intent);
             }
         });
@@ -61,8 +68,7 @@ public class GroupMessageAdapter extends RecyclerView.Adapter<GroupMessageAdapte
             @Override
             public boolean onLongClick(View view) {
                 Intent intent = new Intent(context, DeleteMessage.class);
-                intent.putExtra("Text", list.get(holder.getAdapterPosition()).getMessage());
-                intent.putExtra("Time", list.get(holder.getAdapterPosition()).getTime());
+                intent.putExtra("Id", list.get(holder.getAdapterPosition()).getId());
                 context.startActivity(intent);
                 return true;
             }

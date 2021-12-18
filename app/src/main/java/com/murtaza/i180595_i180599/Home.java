@@ -1,37 +1,19 @@
 package com.murtaza.i180595_i180599;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
-import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class Home extends AppCompatActivity {
@@ -89,9 +71,12 @@ public class Home extends AppCompatActivity {
         if (extras != null) {
             String contact1 = extras.getString("first");
             String contact2 = extras.getString("second");
-            String groupName = contact1 + "," + contact2 + ",Murtaza";
-            String groupPhone = "+923345820814";
+            String groupName = contact1 + "," + contact2;
+            String groupPhone = "-";
             contact = new Contact(R.drawable.no_dp, currentTime, "This is a Sample message", groupName, groupPhone);
+            ChatDBHelper helper = new ChatDBHelper(Home.this);
+            SQLiteDatabase database = helper.getWritableDatabase();
+            helper.insertData(R.drawable.no_dp, currentTime, "This is a Sample message", groupName, groupPhone, database);
         }
         return contact;
     }

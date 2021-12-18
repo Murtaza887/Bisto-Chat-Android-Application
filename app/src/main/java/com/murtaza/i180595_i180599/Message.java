@@ -1,14 +1,13 @@
 package com.murtaza.i180595_i180599;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Message {
+    private int id;
     private String message, time, username, to, from;
 
     public Message() {}
 
-    public Message(String message, String time, String username, String to, String from) {
+    public Message(int id, String message, String time, String username, String to, String from) {
+        this.id = id;
         this.message = message;
         this.time = time;
         this.username = username;
@@ -54,5 +53,13 @@ public class Message {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

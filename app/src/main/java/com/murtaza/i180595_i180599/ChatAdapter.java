@@ -5,29 +5,13 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import org.w3c.dom.Text;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.Delayed;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder> {
 
@@ -65,8 +49,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, EditMessage.class);
+                intent.putExtra("Id", list.get(holder.getAdapterPosition()).getId());
                 intent.putExtra("Text", list.get(holder.getAdapterPosition()).getMessage());
                 intent.putExtra("Time", list.get(holder.getAdapterPosition()).getTime());
+                intent.putExtra("Username", list.get(holder.getAdapterPosition()).getUsername());
+                intent.putExtra("To", list.get(holder.getAdapterPosition()).getTo());
+                intent.putExtra("From", list.get(holder.getAdapterPosition()).getFrom());
                 context.startActivity(intent);
             }
         });
@@ -75,8 +63,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             @Override
             public boolean onLongClick(View view) {
                 Intent intent = new Intent(context, DeleteMessage.class);
-                intent.putExtra("Text", list.get(holder.getAdapterPosition()).getMessage());
-                intent.putExtra("Time", list.get(holder.getAdapterPosition()).getTime());
+                intent.putExtra("Id", list.get(holder.getAdapterPosition()).getId());
                 context.startActivity(intent);
                 return true;
             }

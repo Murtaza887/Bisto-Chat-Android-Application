@@ -45,6 +45,14 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
                 context.startActivity(intent);
             }
         });
+        holder.view.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                Intent intent = new Intent(context, ImageMessaging.class);
+                context.startActivity(intent);
+                return true;
+            }
+        });
     }
 
     @Override

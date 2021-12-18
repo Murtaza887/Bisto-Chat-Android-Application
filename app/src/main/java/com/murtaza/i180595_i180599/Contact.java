@@ -1,7 +1,6 @@
 package com.murtaza.i180595_i180599;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.graphics.Bitmap;
 
 public class Contact {
     private String name, phone, last_message, last_active;

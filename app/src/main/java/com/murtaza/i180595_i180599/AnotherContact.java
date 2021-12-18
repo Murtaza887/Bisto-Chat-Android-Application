@@ -1,6 +1,10 @@
 package com.murtaza.i180595_i180599;
 
+import android.graphics.Bitmap;
+
 public class AnotherContact {
+
+    public Bitmap bitmap;
     String name, phone;
     int image;
 

@@ -37,13 +37,20 @@ public class CallHistoryAdapter extends RecyclerView.Adapter<CallHistoryAdapter.
         holder.name.setText(list.get(holder.getAdapterPosition()).getName());
         holder.time.setText(list.get(holder.getAdapterPosition()).getTime());
         holder.profile.setImageResource(list.get(holder.getAdapterPosition()).getImage());
-        holder.status_image.setImageResource(R.drawable.outgoing);
+        if (list.get(position).getStatus().equals("incoming")) {
+            holder.status_image.setImageResource(R.drawable.missed_call);
+        }
+        if (list.get(position).getStatus().equals("outgoing")) {
+            holder.status_image.setImageResource(R.drawable.outgoing);
+        }
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, Screen9.class);
                 intent.putExtra("Name", list.get(holder.getAdapterPosition()).getName());
+                intent.putExtra("Time", list.get(holder.getAdapterPosition()).getTime());
                 intent.putExtra("Image", list.get(holder.getAdapterPosition()).getImage());
+                intent.putExtra("Status", list.get(holder.getAdapterPosition()).getStatus());
                 context.startActivity(intent);
             }
         });

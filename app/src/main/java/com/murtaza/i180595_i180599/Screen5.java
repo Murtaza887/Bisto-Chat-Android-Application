@@ -1,12 +1,5 @@
 package com.murtaza.i180595_i180599;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,39 +7,37 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
+import androidx.appcompat.app.ActionBar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.ByteArrayOutputStream;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
-import java.sql.PreparedStatement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
+
+import cz.msebera.android.httpclient.Header;
 
 public class Screen5 extends ScreenshotDetectionActivity {
 
@@ -85,7 +76,8 @@ public class Screen5 extends ScreenshotDetectionActivity {
         textView.setText(name);
 
         TextView textView1 = findViewById(R.id.onlineStatus);
-        if (!last_active.equals("Mon")) {
+        String currentTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(new Date());
+        if (last_active.equals(currentTime)) {
             textView1.setText("Online");
         }
         else {
@@ -101,48 +93,83 @@ public class Screen5 extends ScreenshotDetectionActivity {
             }
         });
 
-        MessagesDBHelper helper = new MessagesDBHelper(Screen5.this);
-        SQLiteDatabase database = helper.getReadableDatabase();
+        String url = "http://192.168.18.152/read2.php";
+        new AsyncHttpClient().get(url, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int i, cz.msebera.android.httpclient.Header[] headers, byte[] bytes) {
+                try {
+                    JSONObject object = new JSONObject(new String(bytes));
+                    for (int k = 0; k < object.getJSONArray("messages").length(); k++) {
+                        JSONObject toAdd = (JSONObject) object.getJSONArray("messages").get(k);
+                        Message message = new Message(toAdd.getInt("id"), toAdd.getString("message"), toAdd.getString("time"), toAdd.getString("username"), toAdd.getString("to"), toAdd.getString("from"));
+                        if (message.getUsername().equals(name)) {
+                            list.add(message);
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
-        String query = "SELECT * FROM MESSAGES where username = '" + name + "'";
-        Cursor cursor = database.rawQuery(query, new String[]{});
-        if (cursor != null)
-            cursor.moveToFirst();
-        do {
-            String message = null;
-            if (cursor != null) {
-                message = cursor.getString(1);
+                recyclerView = findViewById(R.id.messages);
+                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Screen5.this);
+                recyclerView.setLayoutManager(layoutManager);
+                if (!name.contains(",")) {
+                    adapter = new ChatAdapter(list, Screen5.this);
+                    recyclerView.setAdapter(adapter);
+                }
+                else {
+                    groupAdapter = new GroupMessageAdapter(list, Screen5.this);
+                    recyclerView.setAdapter(groupAdapter);
+                }
             }
-            String time = null;
-            if (cursor != null) {
-                time = cursor.getString(2);
-            }
-            String username = null;
-            if (cursor != null) {
-                username = cursor.getString(3);
-            }
-            String receiver = null;
-            if (cursor != null) {
-                receiver = cursor.getString(4);
-            }
-            String sender = null;
-            if (cursor != null) {
-                sender = cursor.getString(5);
-            }
-            list.add(new Message(message, time, username, receiver, sender));
-        } while (cursor.moveToNext());
 
-        recyclerView = findViewById(R.id.messages);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Screen5.this);
-        recyclerView.setLayoutManager(layoutManager);
-        if (!name.contains(",")) {
-            adapter = new ChatAdapter(list, Screen5.this);
-            recyclerView.setAdapter(adapter);
-        }
-        else {
-            groupAdapter = new GroupMessageAdapter(list, Screen5.this);
-            recyclerView.setAdapter(groupAdapter);
-        }
+            @Override
+            public void onFailure(int i, cz.msebera.android.httpclient.Header[] headers, byte[] bytes, Throwable throwable) {
+                Toast.makeText(Screen5.this, "Using offline feature", Toast.LENGTH_SHORT).show();
+                MessagesDBHelper helper = new MessagesDBHelper(Screen5.this);
+                SQLiteDatabase database = helper.getReadableDatabase();
+
+                Cursor cursor = database.rawQuery("SELECT * FROM MESSAGES WHERE username = '" + name + "'", new String[]{});
+                if (cursor != null)
+                    cursor.moveToFirst();
+
+                do {
+                    String value1 = null;
+                    if (cursor != null) {
+                        value1 = cursor.getString(1);
+                    }
+                    String value2 = null;
+                    if (cursor != null) {
+                        value2 = cursor.getString(2);
+                    }
+                    String value3 = null;
+                    if (cursor != null) {
+                        value3 = cursor.getString(3);
+                    }
+                    String value4 = null;
+                    if (cursor != null) {
+                        value4 = cursor.getString(4);
+                    }
+                    String value5 = null;
+                    if (cursor != null) {
+                        value5 = cursor.getString(5);
+                    }
+                    list.add(new Message(100, value1, value2, value3, value4, value5));
+                } while (cursor.moveToNext());
+
+                recyclerView = findViewById(R.id.messages);
+                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Screen5.this);
+                recyclerView.setLayoutManager(layoutManager);
+                if (!name.contains(",")) {
+                    adapter = new ChatAdapter(list, Screen5.this);
+                    recyclerView.setAdapter(adapter);
+                }
+                else {
+                    groupAdapter = new GroupMessageAdapter(list, Screen5.this);
+                    recyclerView.setAdapter(groupAdapter);
+                }
+            }
+        });
 
         EditText editText = findViewById(R.id.searchbar);
         editText.addTextChangedListener(new TextWatcher() {
@@ -170,6 +197,7 @@ public class Screen5 extends ScreenshotDetectionActivity {
                 Intent intent = new Intent(Screen5.this, Screen9.class);
                 intent.putExtra("Name", name);
                 intent.putExtra("Image", image);
+                intent.putExtra("Status", "outgoing");
                 startActivity(intent);
             }
         });
@@ -186,20 +214,125 @@ public class Screen5 extends ScreenshotDetectionActivity {
                 SQLiteDatabase database = helper.getWritableDatabase();
 
                 CurrentUser currentUser = new CurrentUser();
-                helper.insertData(text, currentTime, name, name, currentUser.getUser(), database);
-                list.add(new Message(text, currentTime, name, name, currentUser.getUser()));
 
-                recyclerView = findViewById(R.id.messages);
-                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Screen5.this);
-                recyclerView.setLayoutManager(layoutManager);
-                if (!name.contains(",")) {
-                    adapter = new ChatAdapter(list, Screen5.this);
-                    recyclerView.setAdapter(adapter);
-                }
-                else {
-                    groupAdapter = new GroupMessageAdapter(list, Screen5.this);
-                    recyclerView.setAdapter(groupAdapter);
-                }
+                String url = "http://192.168.18.152/insert2.php";
+                RequestParams requestParams = new RequestParams();
+                requestParams.put("message", text);
+                requestParams.put("time", currentTime);
+                requestParams.put("username", name);
+                requestParams.put("to", name);
+                requestParams.put("from", currentUser.getUser());
+
+                new AsyncHttpClient().post(Screen5.this, url, requestParams, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int i, cz.msebera.android.httpclient.Header[] headers, byte[] bytes) {
+                        try {
+                            JSONObject json = new JSONObject(new String(bytes));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        list = new ArrayList<>();
+                        String url = "http://192.168.18.152/read2.php";
+                        new AsyncHttpClient().get(url, new AsyncHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int i, cz.msebera.android.httpclient.Header[] headers, byte[] bytes) {
+                                try {
+                                    JSONObject object = new JSONObject(new String(bytes));
+                                    for (int k = 0; k < object.getJSONArray("messages").length(); k++) {
+                                        JSONObject toAdd = (JSONObject) object.getJSONArray("messages").get(k);
+                                        Message message = new Message(toAdd.getInt("id"), toAdd.getString("message"), toAdd.getString("time"), toAdd.getString("username"), toAdd.getString("to"), toAdd.getString("from"));
+                                        if (message.getUsername().equals(name)) {
+                                            list.add(message);
+                                        }
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                recyclerView = findViewById(R.id.messages);
+                                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Screen5.this);
+                                recyclerView.setLayoutManager(layoutManager);
+                                if (!name.contains(",")) {
+                                    adapter = new ChatAdapter(list, Screen5.this);
+                                    recyclerView.setAdapter(adapter);
+                                }
+                                else {
+                                    groupAdapter = new GroupMessageAdapter(list, Screen5.this);
+                                    recyclerView.setAdapter(groupAdapter);
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(int i, cz.msebera.android.httpclient.Header[] headers, byte[] bytes, Throwable throwable) {
+                                Toast.makeText(Screen5.this, "Using Offline Feature", Toast.LENGTH_SHORT).show();
+                                MessagesDBHelper helper2 = new MessagesDBHelper(Screen5.this);
+                                SQLiteDatabase database2 = helper2.getReadableDatabase();
+
+                                Cursor cursor2 = database2.rawQuery("SELECT * FROM MESSAGES WHERE username = name", new String[]{});
+                                if (cursor2 != null)
+                                    cursor2.moveToFirst();
+
+                                do {
+                                    String value1 = null;
+                                    if (cursor2 != null) {
+                                        value1 = cursor2.getString(1);
+                                    }
+                                    String value2 = null;
+                                    if (cursor2 != null) {
+                                        value2 = cursor2.getString(2);
+                                    }
+                                    String value3 = null;
+                                    if (cursor2 != null) {
+                                        value3 = cursor2.getString(3);
+                                    }
+                                    String value4 = null;
+                                    if (cursor2 != null) {
+                                        value4 = cursor2.getString(4);
+                                    }
+                                    String value5 = null;
+                                    if (cursor2 != null) {
+                                        value5 = cursor2.getString(5);
+                                    }
+                                    list.add(new Message(100, value1, value2, value3, value4, value5));
+                                } while (cursor2.moveToNext());
+
+                                recyclerView = findViewById(R.id.messages);
+                                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Screen5.this);
+                                recyclerView.setLayoutManager(layoutManager);
+                                if (!name.contains(",")) {
+                                    adapter = new ChatAdapter(list, Screen5.this);
+                                    recyclerView.setAdapter(adapter);
+                                }
+                                else {
+                                    groupAdapter = new GroupMessageAdapter(list, Screen5.this);
+                                    recyclerView.setAdapter(groupAdapter);
+                                }
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                        Toast.makeText(Screen5.this, "Using Offline Feature", Toast.LENGTH_SHORT).show();
+                        MessagesDBHelper helper1 = new MessagesDBHelper(Screen5.this);
+                        SQLiteDatabase database1 = helper1.getWritableDatabase();
+                        Boolean result = helper1.insertData(text, currentTime, name, name, currentUser.getUser(), database1);
+                        if (result.equals(true)) {
+                            recyclerView = findViewById(R.id.messages);
+                            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(Screen5.this);
+                            recyclerView.setLayoutManager(layoutManager);
+                            if (!name.contains(",")) {
+                                adapter = new ChatAdapter(list, Screen5.this);
+                                recyclerView.setAdapter(adapter);
+                            }
+                            else {
+                                groupAdapter = new GroupMessageAdapter(list, Screen5.this);
+                                recyclerView.setAdapter(groupAdapter);
+                            }
+                        }
+                    }
+                });
 
                 editText.getText().clear();
             }

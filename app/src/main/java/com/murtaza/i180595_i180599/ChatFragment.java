@@ -8,15 +8,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.provider.ContactsContract;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -27,17 +18,19 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public class ChatFragment extends Fragment {
 
@@ -84,6 +77,38 @@ public class ChatFragment extends Fragment {
         });
 
         recyclerViewChat = view.findViewById(R.id.Chat_list);
+
+        ChatDBHelper helper = new ChatDBHelper(view.getContext());
+        SQLiteDatabase database = helper.getReadableDatabase();
+
+        String query = "SELECT * FROM CONTACTS";
+        Cursor cursor = database.rawQuery(query, new String[]{});
+        if (cursor != null)
+            cursor.moveToFirst();
+        do {
+            int image = -1;
+            if (cursor != null) {
+                image = cursor.getInt(3);
+            }
+            String last_active = null;
+            if (cursor != null) {
+                last_active = cursor.getString(5);
+            }
+            String last_message = null;
+            if (cursor != null) {
+                last_message = cursor.getString(4);
+            }
+            String name = null;
+            if (cursor != null) {
+                name = cursor.getString(1);
+            }
+            String phone = null;
+            if (cursor != null) {
+                phone = cursor.getString(2);
+            }
+            chatList.add(new Contact(image, last_active, last_message, name, phone));
+        } while (cursor.moveToNext());
+
         checkPermission();
 
         ImageView imageView = view.findViewById(R.id.back_arrow);
@@ -148,7 +173,9 @@ public class ChatFragment extends Fragment {
                         model = new Contact(pictures[counter], currentTime, "This is a sample message.", name, number);
                     }
                     else {
-                        model = new Contact(pictures[counter], "Mon", "This is a sample message.", name, number);
+                        String days[] = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+                        int random = new Random().nextInt(7);
+                        model = new Contact(pictures[counter], days[random], "This is a sample message.", name, number);
                     }
                     chatList.add(model);
                     phoneCursor.close();

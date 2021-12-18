@@ -22,6 +22,7 @@ public class ChatDBHelper extends SQLiteOpenHelper {
         String create = "CREATE TABLE CONTACTS (_id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, number TEXT, image INTEGER, last_message TEXT, last_active TEXT)";
         sqLiteDatabase.execSQL(create);
 
+        insertData(R.drawable.no_dp, "Mon", "This is a sample message", "Abbu, Aamir Bhai", "-", sqLiteDatabase);
     }
 
     public Boolean insertData(int image, String last_active, String last_message, String name, String number, SQLiteDatabase database) {

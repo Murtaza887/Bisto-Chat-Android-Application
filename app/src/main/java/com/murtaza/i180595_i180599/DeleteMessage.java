@@ -1,60 +1,44 @@
 package com.murtaza.i180595_i180599;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import cz.msebera.android.httpclient.Header;
 
 public class DeleteMessage extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
         setContentView(R.layout.activity_delete_message);
 
-        String text = getIntent().getStringExtra("Text");
-        String time = getIntent().getStringExtra("Time");
-
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("messages");
-        reference.addChildEventListener(new ChildEventListener() {
+        int id = getIntent().getIntExtra("Id", 0);
+        String url = "http://192.168.18.152/delete2.php";
+        RequestParams requestParams = new RequestParams();
+        requestParams.put("id", id);
+        new AsyncHttpClient().post(DeleteMessage.this, url, requestParams, new AsyncHttpResponseHandler() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Message message = snapshot.getValue(Message.class);
-                if (message.getMessage().equals(text) && message.getTime().equals(time)) {
-                    String key = snapshot.getKey();
-                    reference.child(key).removeValue();
-                }
+            public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                Toast.makeText(DeleteMessage.this, "Message Deleted", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(DeleteMessage.this, Home.class);
+                startActivity(intent);
             }
 
             @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
 
             }
         });
-        Intent intent = new Intent(DeleteMessage.this, Home.class);
-        startActivity(intent);
+
     }
 }
