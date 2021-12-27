@@ -1,16 +1,14 @@
 package com.murtaza.i180595_i180599;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -25,6 +23,18 @@ public class Screen1 extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
         setContentView(R.layout.activity_screen1);
+
+        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(token -> {
+            if (!TextUtils.isEmpty(token)) {
+                Log.d("TAG", "retrieve token successful : " + token);
+            } else{
+                Log.w("TAG", "token should not be null...");
+            }
+        }).addOnFailureListener(e -> {
+            //handle e
+        }).addOnCanceledListener(() -> {
+            //handle cancel
+        }).addOnCompleteListener(task -> Log.v("TAG", "This is the token : " + task.getResult()));
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {

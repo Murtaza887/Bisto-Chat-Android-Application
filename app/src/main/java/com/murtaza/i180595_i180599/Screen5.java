@@ -22,7 +22,6 @@ import androidx.appcompat.app.ActionBar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -202,6 +201,18 @@ public class Screen5 extends ScreenshotDetectionActivity {
             }
         });
 
+        ImageView img2 = findViewById(R.id.videoCall);
+        img2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Screen5.this, VideoCall.class);
+                intent.putExtra("Name", name);
+                intent.putExtra("Image", image);
+                intent.putExtra("Status", "outgoing");
+                startActivity(intent);
+            }
+        });
+
         ImageView send = findViewById(R.id.sendMessage);
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -374,6 +385,7 @@ public class Screen5 extends ScreenshotDetectionActivity {
 
                 } else if (options[item].equals("Choose from Gallery")) {
                     Intent pickPhoto = new Intent(Intent.ACTION_OPEN_DOCUMENT, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+                    pickPhoto.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                     startActivityForResult(pickPhoto , 1);
 
                 } else if (options[item].equals("Cancel")) {
@@ -393,8 +405,6 @@ public class Screen5 extends ScreenshotDetectionActivity {
                     if (resultCode == RESULT_OK && data != null) {
                         Bitmap selectedImage = (Bitmap) data.getExtras().get("data");
                         bitmap = selectedImage;
-                        ImageView imageView = findViewById(R.id.image);
-                        imageView.setImageBitmap(bitmap);
                     }
 
                     break;
@@ -403,8 +413,7 @@ public class Screen5 extends ScreenshotDetectionActivity {
                         Uri selectedImage = data.getData();
                         String[] filePathColumn = {MediaStore.Images.Media.DATA};
                         if (selectedImage != null) {
-                            Cursor cursor = getContentResolver().query(selectedImage,
-                                    filePathColumn, null, null, null);
+                            Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
                             if (cursor != null) {
                                 cursor.moveToFirst();
 
@@ -417,8 +426,6 @@ public class Screen5 extends ScreenshotDetectionActivity {
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
-                            ImageView imageView = findViewById(R.id.image);
-                            imageView.setImageBitmap(bitmap);
                         }
                     }
                     break;
@@ -428,8 +435,7 @@ public class Screen5 extends ScreenshotDetectionActivity {
 
     @Override
     public void onScreenCaptured(String path) {
-        FirebaseMessaging.getInstance().subscribeToTopic("all");
-        FcmNotificationsSender sender = new FcmNotificationsSender("/topics/all", "Screenshot Captured", path, getApplicationContext(),Screen5.this);
+        FcmNotificationsSender sender = new FcmNotificationsSender("cik7iyk3QaaMh2qwWEDhOI:APA91bES7StBog6--aPrU-Snzv3hFaKncR0t29lXrQLpmJGXr9hiVREXagO_VVA7o3soe0a6G-04fVfk8HGSW7qefXC715tZCiGG4CmraQ02QM_OLaDvtZ6hy_f8zobEBkPcVC3igUWA", "Screenshot Captured", path, getApplicationContext(),Screen5.this);
         sender.SendNotifications();
     }
 

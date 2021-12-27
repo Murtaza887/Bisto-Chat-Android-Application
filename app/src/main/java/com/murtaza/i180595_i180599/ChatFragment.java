@@ -133,7 +133,11 @@ public class ChatFragment extends Fragment {
 
     private void filter(String text) {
         ArrayList<Contact> filteredList = new ArrayList<>();
-        for (Contact contact: chatList) {
+        List<Contact> temp = new ArrayList<>();
+        for (int i = 0; i < chatList.size()-1; i++) {
+            temp.add(chatList.get(i));
+        }
+        for (Contact contact: temp) {
             if (contact.getName().toLowerCase().contains(text.toLowerCase())) {
                 filteredList.add(contact);
             }

@@ -12,6 +12,9 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
 
     <application
         android:allowBackup="true"
@@ -23,12 +26,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.I180595_i180599">
         <activity
+            android:name=".VideoCall"
+            android:exported="true" />
+        <activity
             android:name=".ImageMessaging"
             android:exported="true" />
         <activity
             android:name=".ImageSelection"
-            android:theme="@style/Theme.I180595_i180599.CustomTheme"
-            android:exported="true" />
+            android:exported="true"
+            android:theme="@style/Theme.I180595_i180599.CustomTheme" />
         <activity
             android:name=".CreateGroup"
             android:exported="true" />
